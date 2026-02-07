@@ -25,7 +25,7 @@ app.use(express.static('public'));
 app.use(express.json()); //Allows us to read JSON bodies in POST requests
 
 //API Routes (The "Menu")
-// Get /players - returns a list of all players
+//GET /players - returns a list of all players
 app.get('/players', async(req, res) => {
     try{
         const players= await db.collection("Players").find({}).toArray();
@@ -35,6 +35,31 @@ app.get('/players', async(req, res) => {
     }
 });
 
+//POST /players - Adds a new player to the database
+app.post('/players', async(req, res)=>{
+    try{
+        const newPlayer =req.body;
+
+        // Validate Data is not empty 
+        if (!newPlayer.username||!newPlayer.class){
+            return res.status(400).json({error: "Username and Class are required!"});
+        }
+
+        // Add default data
+        newPlayer.level = parseInt(newPlayer.level)||1;
+        newPlayer.inventory = ["Starter Sword","Bread"];
+
+        //Insert into MongoDB
+        const result = await db.collection("Players").insertOne((newPlayer));
+
+        //Send back success
+        res.status(201).json(result);
+    } catch(error){
+        console.error("Error creating player:", error);
+        res.status(500).json({erorr:"Failed to create player"});
+    }
+})
+ 
 //Start the server
 connectDB().then(()=>{
     app.listen(port,()=>{

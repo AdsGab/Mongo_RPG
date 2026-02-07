@@ -10,7 +10,25 @@
 
     <div class="max-w-4xl mx-auto">
         <h1 class="text-3xl font-bold mb-8 text-emerald-400">🛡️ Online Players</h1>
+        <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-xl mb-8">
+            <h2 class="text-xl font-bold mb-4 text-emerald-400">📝 Recruit New Player</h2>
+            <form id="recruit-form" class="flex flex-col md:flex-row gap-4">
+                <input type="text" id="username" placeholder="Username" class="bg-slate-900 text-white p-2 rounded border border-slate-600 w-full" required>
+                
+                <select id="class" class="bg-slate-900 text-white p-2 rounded border border-slate-600 w-full">
+                    <option value="Warrior">Warrior</option>
+                    <option value="Mage">Mage</option>
+                    <option value="Rogue">Rogue</option>
+                    <option value="Paladin">Paladin</option>
+                </select>
 
+                <input type="number" id="level" placeholder="Level" class="bg-slate-900 text-white p-2 rounded border border-slate-600 w-24" value="1">
+
+                <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-6 rounded transition">
+                    Recruit
+                </button>
+            </form>
+        </div>
         <div id="player-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
             </div>
     </div>
@@ -40,6 +58,30 @@
                 });
             })
             .catch(err => console.error("Error loading players:", err));
+            document.getElementById('recruit-form').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Stop page from reloading
+
+            // 1. Gather data from the form
+            const newPlayer = {
+                username: document.getElementById('username').value,
+                class: document.getElementById('class').value,
+                level: document.getElementById('level').value
+            };
+
+            // 2. Send POST request to your backend
+            const response = await fetch('/players', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newPlayer)
+            });
+
+            // 3. If successful, reload the page to see the new player
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert("Failed to recruit player!");
+            }
+        });
     </script>
 </body>
 </html>
