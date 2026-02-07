@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 p-10">
+
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8 text-emerald-400">🛡️ Online Players</h1>
+
+        <div id="player-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            </div>
+    </div>
+
+    <script>
+        // 1. Fetch data from your Backend API
+        fetch('/players') 
+            .then(response => response.json())
+            .then(players => {
+                const grid = document.getElementById('player-grid');
+                
+                // 2. Loop through the data and build HTML cards
+                players.forEach(player => {
+                    const card = document.createElement('div');
+                    card.className = "bg-slate-800 p-6 rounded-lg border border-slate-700 shadow-xl";
+                    
+                    card.innerHTML = `
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">${player.username}</h2>
+                            <span class="bg-emerald-900 text-emerald-300 text-xs px-2 py-1 rounded">
+                                Lvl ${player.level}
+                            </span>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-2">Class: <span class="text-white">${player.class}</span></p>
+                    `;
+                    grid.appendChild(card);
+                });
+            })
+            .catch(err => console.error("Error loading players:", err));
+    </script>
+</body>
+</html>
